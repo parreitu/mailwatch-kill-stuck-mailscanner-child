@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 
 # Author: Pedro Arreitunandia
-# Code and last version https://github.com/parreitu/mailwath-kill-stucked-mailscanner-child
+# Code and last version https://github.com/parreitu/mailwatch-kill-stuck-mailscanner-child
 
 # I don't know why, but some times per day I get this error in the mail.log file
 # and as a consequence, MailScanner stops inserting new rows in the MySQL table so
@@ -22,10 +22,10 @@ from datetime import datetime
 # it gets the PID of the problematic MailScanner child and kills it
 # 
 # I call this scritp from the crontab after each reboot:
-# @reboot python /path-of-the-folder/scripts/mailwath-kill-stucked-mailscanner-child.py 
+# @reboot python /path-of-the-folder/scripts/mailwath-kill-stuck-mailscanner-child.py 
 
 # I use my own log file to log each kill action that I have to commit
-my_logfile = open('/tmp/mailwath-kill-stucked-mailscanner-child.log','a')
+my_logfile = open('/tmp/mailwatch-kill-stuck-mailscanner-child.log','a')
 
 # Follow the file as it grows
 for line in tailer.follow(open('/var/log/mail.log')):
