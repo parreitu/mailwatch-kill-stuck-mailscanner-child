@@ -22,7 +22,7 @@ from datetime import datetime
 # it gets the PID of the problematic MailScanner child and kills it
 # 
 # I call this scritp from the crontab after each reboot:
-# @reboot python /path-of-the-folder/scripts/mailwath-kill-stuck-mailscanner-child.py 
+# @reboot python /path-of-the-folder/scripts/mailwatch-kill-stuck-mailscanner-child.py 
 
 # I use my own log file to log each kill action that I have to commit
 my_logfile = open('/tmp/mailwatch-kill-stuck-mailscanner-child.log','a')
