@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-import tailer
 import re
 import os
 import signal
 import time
+import sys
 from datetime import datetime
 
 # Author: Pedro Arreitunandia
@@ -25,15 +25,36 @@ from datetime import datetime
 # @reboot python /path-of-the-folder/scripts/mailwatch-kill-stuck-mailscanner-child.py 
 
 # I use my own log file to log each kill action that I have to commit
-my_logfile = open('/tmp/mailwatch-kill-stuck-mailscanner-child.log','a')
 
-# Follow the file as it grows
-for line in tailer.follow(open('/var/log/mail.log')):
-    if "Error: DBD::mysql::st execute failed" in line:
-        response = re.search(r'^.*MailScanner\[(\d*)\].*', line)
-        if response:
-            pid = int(response.group(1))
-            i = datetime.now()
-            logfile.write(str("DateTime: " + str(i) + "-->  Killing problematic MailScanner child: " + str(pid) + '\n')) 
-            os.kill(pid, signal.SIGTERM)
+my_logfile = "/tmp/mailwath-kill-stucked-mailscanner-child.log"
 
+f = open(my_logfile, 'a')
+i = datetime.now()
+f.write(str("============================================================= "  "\n"))
+f.write(str("  DateTime: " + str(i) + "======================= "  "\n"))
+f.write(str("============================================================= "  "\n"))
+f.close()
+
+
+mail_log_file  = subprocess.Popen(['tail','-F','/var/log/mail.log'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+p = select.poll()
+p.register(mail_log_file.stdout)
+
+while True:
+    if p.poll(1):
+        line = mail_log_file.stdout.readline()
+        if "Error: DBD::mysql::st execute failed" in line:
+            response = re.search(r'^.*MailScanner\[(\d*)\].*', line)
+            if response:
+                try:
+                    f = open(my_logfile, 'a')
+                    pid = int(response.group(1))
+                    i = datetime.now()
+                    f.write(str("DateTime: " + str(i) + "-->  Killing problematic MailScanner child: " + str(pid) + "\n")) 
+                    f.close()
+                    os.kill(pid, signal.SIGTERM)
+                    f.close()
+                except:
+                     f.write(str("DateTime: " + str(i) + "-->  Exception: "+ sys.exc_info()[0] + "\n"))
+                     f.close()
+                     raise
